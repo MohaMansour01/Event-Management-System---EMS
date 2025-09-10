@@ -46,6 +46,36 @@ const deleteEventByID = async (req, res) => {
   }
 };
 
+// Insert event
+const insertEvent = async (req, res) => {
+  try {
+    const db = await connectDB();
+
+    const {
+      name,
+      description,
+      location,
+      date,
+      price,
+      capacity,
+      created_by,
+    } = req.body;
+
+    const created_at = req.body.created_at || new Date();
+
+    const [result] = await db.query(
+      `INSERT INTO events (name, description, location, date, price, capacity, created_by, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, description, location, date, price, capacity, created_by, created_at]
+    );
+
+    res.status(201).json({ message: "Event inserted", id: result.insertId });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Update event by ID
 const updateEventByID = async (req, res) => {
   try {
@@ -95,4 +125,10 @@ const updateEventByID = async (req, res) => {
   }
 };
 
-export { getAllEvents, getEventByID, deleteEventByID, updateEventByID };
+export {
+  getAllEvents,
+  getEventByID,
+  deleteEventByID,
+  updateEventByID,
+  insertEvent,
+};
